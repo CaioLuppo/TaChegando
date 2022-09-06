@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:ta_chegando/web/clients/onibus.dart';
 
 import 'components/navegador.dart';
 
-void main() => runApp(const TaChegando());
+void main() {
+  runApp(const TaChegando());
+  OnibusWebClient().todosOnibus();
+}
 
 class TaChegando extends StatelessWidget {
   const TaChegando({super.key});
