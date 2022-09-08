@@ -20,7 +20,7 @@ class OnibusWebClient {
 
   /// Retorna uma lista com todas as linhas existentes de acordo com o arquivo
   /// do GTFS da API.
-  Future todosOnibus() async {
+  Future<List<LinhaOnibus>> todosOnibus() async {
     List<LinhaOnibus> linhasDeOnibus = [];
     List<String> arquivoDeTexto =
         await File("assets/linhas.txt").readAsLines(encoding: utf8);
@@ -37,9 +37,11 @@ class OnibusWebClient {
         letreiroDireita: informacoesOnibus[1],
         terminalPrimario: informacoesOnibus[5],
         terminalSecundario: informacoesOnibus[6],
+        cor: informacoesOnibus[8],
       );
 
       linhasDeOnibus.add(onibus);
+      if (informacoesOnibus.length != 10) print("$informacoesOnibus ${informacoesOnibus.length}");
     }
 
     return linhasDeOnibus;

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
 class TituloBranco extends TextStyle {
-  const TituloBranco()
+  double tamanho;
+  TituloBranco({this.tamanho = 24})
       : super(
-          fontSize: 24,
+          fontSize: tamanho,
           fontWeight: FontWeight.bold,
           color: Colors.white,
         );
