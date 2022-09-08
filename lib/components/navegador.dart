@@ -19,9 +19,8 @@ class _NavegadorState extends State<Navegador> {
     return Scaffold(
       body: PageView(
         controller: controladorPageView,
-        children:  [
+        children: [
           OnibusPage(),
-          Text("Oi"),
         ],
       ),
       bottomNavigationBar: AnimatedBuilder(

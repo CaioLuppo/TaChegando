@@ -32,6 +32,10 @@ class OnibusWebClient {
           .replaceAll("-", ",")
           .split(",");
 
+      for (var element in informacoesOnibus) {
+        element.replaceAll("|", "-");
+      }
+
       LinhaOnibus onibus = LinhaOnibus(
         letreiroEsquerda: informacoesOnibus[0],
         letreiroDireita: informacoesOnibus[1],
@@ -41,7 +45,6 @@ class OnibusWebClient {
       );
 
       linhasDeOnibus.add(onibus);
-      if (informacoesOnibus.length != 10) print("$informacoesOnibus ${informacoesOnibus.length}");
     }
 
     return linhasDeOnibus;
