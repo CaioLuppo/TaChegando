@@ -37,7 +37,7 @@ class OnibusPage extends StatelessWidget {
                     fillColor: Colors.white,
                     border: OutlineInputBorder(),
                   ),
-                  onSubmitted: (value) => print(value),
+                  onSubmitted: (value) {}, // TODO: Buscar
                 ),
               ),
             ],
