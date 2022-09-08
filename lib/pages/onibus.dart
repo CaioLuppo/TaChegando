@@ -45,7 +45,7 @@ class OnibusPage extends StatelessWidget {
         ),
       ),
       body: Container(
-        color: Theme.of(context).backgroundColor,
+        color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: SingleChildScrollView(
@@ -80,7 +80,20 @@ class OnibusPage extends StatelessWidget {
                                   return Padding(
                                     padding:
                                         const EdgeInsets.fromLTRB(0, 4, 0, 4),
-                                    child: _CartaoOnibus(onibus),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.grey.withOpacity(0.1),
+                                            spreadRadius: 1,
+                                            blurRadius: 3,
+                                            offset: const Offset(0, 0),
+                                          )
+                                        ],
+                                      ),
+                                      child: _CartaoOnibus(onibus),
+                                    ),
                                   );
                                 },
                               ),

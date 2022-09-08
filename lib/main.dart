@@ -16,7 +16,7 @@ class TaChegando extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color.fromARGB(255, 0, 52, 165),
+          seedColor: Color.fromARGB(255, 0, 255, 106),
           brightness: Brightness.light,
         ),
       ),
