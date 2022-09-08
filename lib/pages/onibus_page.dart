@@ -1,12 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:ta_chegando/models/linha_de_onibus.dart';
 import 'package:ta_chegando/styles/text.dart';
-import 'package:ta_chegando/web/clients/onibus.dart';
+import 'package:ta_chegando/web/clients/onibus_client.dart';
 
-class OnibusPage extends StatelessWidget {
-  OnibusPage({super.key});
+List<LinhaOnibus> todosOnibusCache = [];
 
+class OnibusPage extends StatefulWidget {
+  const OnibusPage({super.key});
+
+  @override
+  State<OnibusPage> createState() => _OnibusPageState();
+}
+
+class _OnibusPageState extends State<OnibusPage> {
   final OnibusWebClient _web = OnibusWebClient();
+  bool buscou = false;
+  String termoBusca = '';
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +46,16 @@ class OnibusPage extends StatelessWidget {
                     fillColor: Colors.white,
                     border: OutlineInputBorder(),
                   ),
-                  onSubmitted: (value) {}, // TODO: Buscar
+                  onSubmitted: (texto) {
+                    setState(() {
+                      if (texto.isNotEmpty) {
+                        termoBusca = texto;
+                        buscou = true;
+                      } else {
+                        buscou = false;
+                      }
+                    });
+                  },
                 ),
               ),
             ],
@@ -55,7 +73,9 @@ class OnibusPage extends StatelessWidget {
                 future: Future.delayed(
                   const Duration(seconds: 2),
                 ).then(
-                  (value) => _web.todosOnibus(),
+                  (value) => !buscou
+                      ? _web.todosOnibus()
+                      : _web.buscaOnibus(termoBusca),
                 ),
                 builder: (context, snapshot) {
                   switch (snapshot.connectionState) {
@@ -99,10 +119,14 @@ class OnibusPage extends StatelessWidget {
                               ),
                             ],
                           );
+                        } else {
+                          return const Center(
+                            child: Text("Nenhum ônibus encontrado"),
+                          );
                         }
                       }
                   }
-                  return const Text("Erro ao carregar linhas");
+                  return const Center(child: Text("Erro ao carregar linhas"));
                 },
               ),
             ),
@@ -139,7 +163,7 @@ class _CartaoOnibus extends Container {
                     child: Icon(Icons.directions_bus),
                   ),
                   Text(
-                    "${onibus.letreiroEsquerda}/${onibus.letreiroDireita} - ${onibus.terminalPrimario} → ${onibus.terminalSecundario}",
+                    "${onibus.letreiroEsquerda}/${onibus.letreiroDireita} - ${onibus.terminalPrimario} ↔ ${onibus.terminalSecundario}",
                     style: const TextStyle(
                       fontWeight: FontWeight.w400,
                     ),

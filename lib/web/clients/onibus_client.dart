@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart';
-import 'dart:convert';
 
 import 'package:ta_chegando/models/linha_de_onibus.dart';
+import 'package:ta_chegando/pages/onibus_page.dart';
 import 'package:ta_chegando/web/client.dart';
 
 class OnibusWebClient {
@@ -14,10 +14,12 @@ class OnibusWebClient {
       "52708040eaca46816d1209138a574cb7cc334abcde5458c28c81e0519acece3b";
 
   /// Loga na aplicação.
-  void logar() {
-    client
+  Future<String> logar() async {
+    Response resposta = await client
         .post(Uri.parse("$baseURL/Login/Autenticar?token=$token"))
         .timeout(const Duration(seconds: 5));
+
+    return pegaCookie(resposta);
   }
 
   /// Retorna uma lista com todas as linhas existentes de acordo com o arquivo
@@ -25,7 +27,7 @@ class OnibusWebClient {
   Future<List<LinhaOnibus>> todosOnibus() async {
     List<LinhaOnibus> linhasDeOnibus = [];
     List<String> arquivoDeTexto =
-        await File("assets/linhas.txt").readAsLines(encoding: utf8);
+        await File("lib/assets/linhas.txt").readAsLines(encoding: utf8);
 
     for (int linha = 1; linha < arquivoDeTexto.length; linha++) {
       List<String> informacoesOnibus = arquivoDeTexto[linha]
@@ -48,22 +50,36 @@ class OnibusWebClient {
 
       linhasDeOnibus.add(onibus);
     }
+    
+    todosOnibusCache = linhasDeOnibus;
 
     return linhasDeOnibus;
+  }
+
+  String pegaCookie(Response response) {
+    String? rawCookie = response.headers['set-cookie'];
+    if (rawCookie != null) {
+      int index = rawCookie.indexOf(';');
+      return (index == -1) ? rawCookie : rawCookie.substring(0, index);
+    }
+    return '';
   }
 
   /// Retorna uma lista com os ônibus procurados pelo usuário.
   Future<List<LinhaOnibus>> buscaOnibus(String termoBusca) async {
     // Loga e faz a requisição pra API.
-    logar();
+    String authCookie = await logar();
     final Response respostaJson = await client.get(
-      Uri.parse("$baseURL/Linha/Buscar?termoBusca=$termoBusca"),
-      headers: {'Authorization': 'Bearer $token'},
-    );
+      Uri.parse(
+          "$baseURL/Linha/BuscarLinhaSentido?termosBusca=$termoBusca&sentido=1"),
+      headers: {'Cookie': authCookie},
+    ).timeout(const Duration(seconds: 5));
 
     /// Lista dos Json presentes no body da requisição.
     final List<dynamic> listaJson = jsonDecode(respostaJson.body);
 
-    return listaJson.map((dynamic json) => LinhaOnibus.fromJson(json)).toList();
+    return listaJson
+        .map((onibusJson) => LinhaOnibus.fromJson(onibusJson))
+        .toList();
   }
 }

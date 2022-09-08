@@ -1,3 +1,5 @@
+import 'package:ta_chegando/pages/onibus_page.dart';
+
 class LinhaOnibus {
   String letreiroEsquerda;
   String letreiroDireita;
@@ -14,9 +16,16 @@ class LinhaOnibus {
 
   /// Cria a classe a partir dos dados que foram informados pela API
   LinhaOnibus.fromJson(Map<String, dynamic> json)
-      : letreiroEsquerda = json["lt"],
-        letreiroDireita = json["tl"],
-        terminalPrimario = json["tp"],
-        terminalSecundario = json["ts"],
-        cor = '';
+      : letreiroEsquerda = json["lt"].toString(),
+        letreiroDireita = json["tl"].toString(),
+        terminalPrimario = json["tp"].toString(),
+        terminalSecundario = json["ts"].toString(),
+        cor = "" {
+          for (LinhaOnibus onibus in todosOnibusCache) {
+            if (letreiroEsquerda == onibus.letreiroEsquerda) cor = onibus.cor;
+          }
+        }
+  
+  
+
 }

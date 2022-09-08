@@ -1,7 +1,7 @@
 // Tela principal do aplicativo
 
 import "package:flutter/material.dart";
-import 'package:ta_chegando/pages/onibus.dart';
+import 'package:ta_chegando/pages/onibus_page.dart';
 
 class Navegador extends StatefulWidget {
   const Navegador({super.key});
@@ -19,7 +19,7 @@ class _NavegadorState extends State<Navegador> {
     return Scaffold(
       body: PageView(
         controller: controladorPageView,
-        children: [
+        children: const [
           OnibusPage(),
         ],
       ),

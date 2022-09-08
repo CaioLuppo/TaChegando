@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ta_chegando/web/clients/onibus.dart';
+import 'package:ta_chegando/web/clients/onibus_client.dart';
 
 import 'components/navegador.dart';
 
@@ -16,7 +16,7 @@ class TaChegando extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Color.fromARGB(255, 0, 255, 106),
+          seedColor: const Color.fromARGB(255, 0, 255, 106),
           brightness: Brightness.light,
         ),
       ),
