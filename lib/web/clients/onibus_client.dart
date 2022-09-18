@@ -1,10 +1,10 @@
 import 'dart:convert';
-import 'dart:io';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart';
+import 'package:ta_chegando_fixed/pages/onibus_page.dart';
 
-import 'package:ta_chegando/models/linha_de_onibus.dart';
-import 'package:ta_chegando/pages/onibus_page.dart';
-import 'package:ta_chegando/web/client.dart';
+import '/models/linha_de_onibus.dart';
+import '/web/client.dart';
 
 class OnibusWebClient {
   final baseURL = Uri.parse("http://api.olhovivo.sptrans.com.br/v2.1");
@@ -24,21 +24,19 @@ class OnibusWebClient {
 
   /// Retorna uma lista com todas as linhas existentes de acordo com o arquivo
   /// do GTFS da API.
-  Future<List<LinhaOnibus>> todosOnibus() async {
+  Future<void> todosOnibus() async {
     List<LinhaOnibus> linhasDeOnibus = [];
-    List<String> arquivoDeTexto =
-        await File("lib/assets/linhas.txt").readAsLines(encoding: utf8);
+    List<String> arquivoDeTexto = await rootBundle
+        .loadString("assets/linhas.txt")
+        .then((value) => value.split("\n"));
 
     for (int linha = 1; linha < arquivoDeTexto.length; linha++) {
       List<String> informacoesOnibus = arquivoDeTexto[linha]
           .replaceAll("\"", '')
           .replaceAll(" - ", ",")
           .replaceAll("-", ",")
+          .replaceAll("|", "-")
           .split(",");
-
-      for (var element in informacoesOnibus) {
-        element.replaceAll("|", "-");
-      }
 
       LinhaOnibus onibus = LinhaOnibus(
         letreiroEsquerda: informacoesOnibus[0],
@@ -50,10 +48,8 @@ class OnibusWebClient {
 
       linhasDeOnibus.add(onibus);
     }
-    
-    todosOnibusCache = linhasDeOnibus;
 
-    return linhasDeOnibus;
+    todosOnibusCache = linhasDeOnibus;
   }
 
   String pegaCookie(Response response) {

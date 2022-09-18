@@ -1,9 +1,8 @@
+import 'package:diacritic/diacritic.dart';
 import 'package:flutter/material.dart';
-import 'package:ta_chegando/models/linha_de_onibus.dart';
-import 'package:ta_chegando/styles/text.dart';
-import 'package:ta_chegando/web/clients/onibus_client.dart';
-
-List<LinhaOnibus> todosOnibusCache = [];
+import '../models/linha_de_onibus.dart';
+import '../styles/text.dart';
+import '../web/clients/onibus_client.dart';
 
 class OnibusPage extends StatefulWidget {
   const OnibusPage({super.key});
@@ -12,14 +11,23 @@ class OnibusPage extends StatefulWidget {
   State<OnibusPage> createState() => _OnibusPageState();
 }
 
+/// Variável usada para evitar buscas desnecessárias no arquivo de ônibus.
+List<LinhaOnibus> todosOnibusCache = [];
+
 class _OnibusPageState extends State<OnibusPage> {
   final OnibusWebClient _web = OnibusWebClient();
+
+  bool mostrarTudo = false;
+
   bool buscou = false;
   String termoBusca = '';
 
   @override
   Widget build(BuildContext context) {
+    _web.todosOnibus();
+
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.1),
       appBar: AppBar(
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(70),
@@ -49,9 +57,10 @@ class _OnibusPageState extends State<OnibusPage> {
                   onSubmitted: (texto) {
                     setState(() {
                       if (texto.isNotEmpty) {
-                        termoBusca = texto;
+                        termoBusca = removeDiacritics(texto.toLowerCase());
                         buscou = true;
                       } else {
+                        mostrarTudo = false;
                         buscou = false;
                       }
                     });
@@ -62,78 +71,130 @@ class _OnibusPageState extends State<OnibusPage> {
           ),
         ),
       ),
-      body: Container(
-        color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: FutureBuilder<List<LinhaOnibus>>(
-                future: Future.delayed(
-                  const Duration(seconds: 2),
-                ).then(
-                  (value) => !buscou
-                      ? _web.todosOnibus()
-                      : _web.buscaOnibus(termoBusca),
-                ),
-                builder: (context, snapshot) {
-                  switch (snapshot.connectionState) {
-                    case ConnectionState.none:
-                      break;
-                    case ConnectionState.waiting:
-                      return const Center(child: CircularProgressIndicator());
-                    case ConnectionState.active:
-                      break;
-                    case ConnectionState.done:
-                      if (snapshot.hasData) {
-                        final todosOnibus = snapshot.data ?? [];
-                        if (todosOnibus.isNotEmpty) {
-                          return Flex(
-                            direction: Axis.vertical,
-                            children: [
-                              ListView.builder(
-                                shrinkWrap: true,
-                                itemCount: todosOnibus.length,
-                                itemBuilder: (context, index) {
-                                  final onibus = todosOnibus[index];
-                                  return Padding(
-                                    padding:
-                                        const EdgeInsets.fromLTRB(0, 4, 0, 4),
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.grey.withOpacity(0.1),
-                                            spreadRadius: 1,
-                                            blurRadius: 3,
-                                            offset: const Offset(0, 0),
-                                          )
-                                        ],
-                                      ),
-                                      child: _CartaoOnibus(onibus),
-                                    ),
-                                  );
-                                },
-                              ),
-                            ],
-                          );
-                        } else {
-                          return const Center(
-                            child: Text("Nenhum ônibus encontrado"),
-                          );
-                        }
-                      }
-                  }
-                  return const Center(child: Text("Erro ao carregar linhas"));
-                },
-              ),
-            ),
-          ),
+      body: FutureBuilder<List<LinhaOnibus>>(
+        future: Future.delayed(
+          const Duration(seconds: 2),
+        ).then(
+          (value) async {
+            return buscou ? await buscaOnibusInteligente() : todosOnibusCache;
+          },
         ),
+        builder: (context, snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.none:
+              break;
+            case ConnectionState.waiting:
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: const [
+                    CircularProgressIndicator(),
+                    Padding(
+                      padding: EdgeInsets.only(top: 8.0),
+                      child: Text("Carregando"),
+                    )
+                  ],
+                ),
+              );
+            case ConnectionState.active:
+              break;
+            case ConnectionState.done:
+              if (snapshot.hasData) {
+                final todosOnibus = snapshot.data ?? [];
+                if (todosOnibus.isNotEmpty) {
+                  return Column(
+                    children: [
+                      Flexible(
+                        child: Scrollbar(
+                          radius: const Radius.circular(20),
+                          thickness: 10,
+                          trackVisibility: true,
+                          interactive: true,
+                          child: ListView.builder(
+                            padding: const EdgeInsets.all(10),
+                            addAutomaticKeepAlives: true,
+                            shrinkWrap: true,
+                            itemCount:
+                                mostrarTudo || buscou ? todosOnibus.length : 4,
+                            itemBuilder: (context, index) {
+                              final onibus = todosOnibus[index];
+                              return Padding(
+                                padding: const EdgeInsets.fromLTRB(0, 4, 0, 4),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey.withOpacity(0.1),
+                                        spreadRadius: 1,
+                                        blurRadius: 3,
+                                        offset: const Offset(0, 0),
+                                      )
+                                    ],
+                                  ),
+                                  child: _CartaoOnibus(onibus),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                      if (!mostrarTudo && !buscou)
+                        Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                mostrarTudo = true;
+                              });
+                            },
+                            child: const Text("Mostrar tudo"),
+                          ),
+                        )
+                    ],
+                  );
+                } else {
+                  return const Center(
+                    child: Text("Nenhum ônibus encontrado."),
+                  );
+                }
+              }
+          }
+          return const Center(child: Text("Erro desconhecido"));
+        },
       ),
     );
+  }
+
+  /// Utiliza o método de buscaOnibus porém filtrando a entrada do usuário
+  /// e adaptrando para o sistema da API.
+  Future<List<LinhaOnibus>> buscaOnibusInteligente() async {
+    var abreviacoes = {
+      // Abreviações que a API utiliza.
+      "terminal": "term",
+      "vila": "vl",
+      "escola": "esc",
+      "jardim": "jd",
+      "parque": "pq",
+      "lago": "lgo",
+      "hospital": "hosp"
+    };
+    List<LinhaOnibus> respostaOnibus = [];
+
+    String termoBuscaAdaptado = termoBusca;
+    abreviacoes.forEach((key, value) {
+      termoBuscaAdaptado = termoBuscaAdaptado.replaceAll(key, value);
+    });
+    respostaOnibus = await _web.buscaOnibus(termoBuscaAdaptado);
+
+    String termoBuscaAdaptado2 = termoBusca;
+    abreviacoes.forEach((key, value) {
+      termoBuscaAdaptado = termoBuscaAdaptado.replaceAll(value, key);
+    });
+    respostaOnibus.addAll(await _web.buscaOnibus(termoBuscaAdaptado2));
+
+    return respostaOnibus;
   }
 }
 
@@ -147,7 +208,7 @@ class _CartaoOnibus extends Container {
               borderRadius: BorderRadius.circular(10.0),
               color: Color(int.parse('0xFF${onibus.cor}')),
             ),
-            height: 40,
+            height: 90,
             child: Container(
               padding: const EdgeInsets.all(4),
               decoration: const BoxDecoration(
@@ -156,17 +217,39 @@ class _CartaoOnibus extends Container {
                     bottomRight: Radius.circular(10.0)),
                 color: Colors.white,
               ),
-              child: Row(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.only(left: 4.0, right: 4.0),
-                    child: Icon(Icons.directions_bus),
+                  Row(
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.only(left: 4.0, right: 4.0),
+                        child: Icon(Icons.directions_bus),
+                      ),
+                      Text(
+                        "${onibus.letreiroEsquerda}/${onibus.letreiroDireita}",
+                        style: const TextStyle(
+                            fontWeight: FontWeight.w500, fontSize: 16),
+                      ),
+                    ],
                   ),
-                  Text(
-                    "${onibus.letreiroEsquerda}/${onibus.letreiroDireita} - ${onibus.terminalPrimario} ↔ ${onibus.terminalSecundario}",
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w400,
-                    ),
+                  Row(
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.only(left: 4.0, right: 4.0),
+                        child: Icon(Icons.arrow_forward),
+                      ),
+                      Text(onibus.terminalPrimario)
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.only(left: 4.0, right: 4.0),
+                        child: Icon(Icons.arrow_back),
+                      ),
+                      Text(onibus.terminalSecundario)
+                    ],
                   ),
                 ],
               ),

@@ -1,6 +1,6 @@
 {
-    "name": "ta_chegando",
-    "short_name": "ta_chegando",
+    "name": "ta_chegando_fixed",
+    "short_name": "ta_chegando_fixed",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

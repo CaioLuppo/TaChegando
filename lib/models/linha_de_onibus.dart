@@ -1,4 +1,4 @@
-import 'package:ta_chegando/pages/onibus_page.dart';
+import '../pages/onibus_page.dart';
 
 class LinhaOnibus {
   String letreiroEsquerda;

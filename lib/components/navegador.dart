@@ -1,7 +1,7 @@
 // Tela principal do aplicativo
 
 import "package:flutter/material.dart";
-import 'package:ta_chegando/pages/onibus_page.dart';
+import '../pages/onibus_page.dart';
 
 class Navegador extends StatefulWidget {
   const Navegador({super.key});
@@ -10,10 +10,10 @@ class Navegador extends StatefulWidget {
   State<Navegador> createState() => _NavegadorState();
 }
 
-class _NavegadorState extends State<Navegador> {
-  /// Controlador das páginas. Navega por índice.
-  PageController controladorPageView = PageController();
+/// Controlador das páginas. Navega por índice.
+PageController controladorPageView = PageController();
 
+class _NavegadorState extends State<Navegador> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,6 +21,8 @@ class _NavegadorState extends State<Navegador> {
         controller: controladorPageView,
         children: const [
           OnibusPage(),
+          Text("Mapa"),
+          Text("Pontos")
         ],
       ),
       bottomNavigationBar: AnimatedBuilder(
@@ -30,8 +32,8 @@ class _NavegadorState extends State<Navegador> {
               currentIndex: controladorPageView.page?.round() ?? 0,
               onTap: (index) => controladorPageView.animateToPage(
                 index,
-                duration: const Duration(milliseconds: 500),
-                curve: Curves.easeInCubic,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInQuad,
               ),
               items: const [
                 BottomNavigationBarItem(
