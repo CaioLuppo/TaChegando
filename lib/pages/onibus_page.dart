@@ -178,7 +178,8 @@ class _OnibusPageState extends State<OnibusPage> {
       "jardim": "jd",
       "parque": "pq",
       "lago": "lgo",
-      "hospital": "hosp"
+      "hospital": "hosp",
+      "cemiterio": "cem",
     };
     List<LinhaOnibus> respostaOnibus = [];
 
