@@ -172,14 +172,14 @@ class _OnibusPageState extends State<OnibusPage> {
   Future<List<LinhaOnibus>> buscaOnibusInteligente() async {
     var abreviacoes = {
       // Abreviações que a API utiliza.
-      "terminal": "term",
-      "vila": "vl",
-      "escola": "esc",
-      "jardim": "jd",
-      "parque": "pq",
-      "lago": "lgo",
-      "hospital": "hosp",
-      "cemiterio": "cem",
+      "terminal": "term.",
+      "vila": "vl.",
+      "escola": "esc.",
+      "jardim": "jd.",
+      "parque": "pq.",
+      "lago": "lgo.",
+      "hospital": "hosp.",
+      "cemiterio": "cem.",
     };
     List<LinhaOnibus> respostaOnibus = [];
 
