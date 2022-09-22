@@ -7,11 +7,6 @@ import '/models/linha_de_onibus.dart';
 import '/web/client.dart';
 
 class OnibusWebClient {
-  final baseURL = Uri.parse("http://api.olhovivo.sptrans.com.br/v2.1");
-
-  /// Token para login
-  final token =
-      "52708040eaca46816d1209138a574cb7cc334abcde5458c28c81e0519acece3b";
 
   /// Loga na aplicação.
   Future<String> logar() async {
