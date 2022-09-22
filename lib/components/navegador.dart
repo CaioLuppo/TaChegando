@@ -1,6 +1,7 @@
 // Tela principal do aplicativo
 
 import "package:flutter/material.dart";
+import 'package:ta_chegando_fixed/pages/mapa_page.dart';
 import '../pages/onibus_page.dart';
 
 class Navegador extends StatefulWidget {
@@ -21,7 +22,7 @@ class _NavegadorState extends State<Navegador> {
         controller: controladorPageView,
         children: const [
           OnibusPage(),
-          Text("Mapa"),
+          Mapa(),
           Text("Pontos")
         ],
       ),
