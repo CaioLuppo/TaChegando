@@ -8,15 +8,6 @@ import '/web/client.dart';
 
 class OnibusWebClient {
 
-  /// Loga na aplicação.
-  Future<String> logar() async {
-    Response resposta = await client
-        .post(Uri.parse("$baseURL/Login/Autenticar?token=$token"))
-        .timeout(const Duration(seconds: 5));
-
-    return pegaCookie(resposta);
-  }
-
   /// Retorna uma lista com todas as linhas existentes de acordo com o arquivo
   /// do GTFS da API.
   Future<void> todosOnibus() async {
@@ -45,15 +36,6 @@ class OnibusWebClient {
     }
 
     todosOnibusCache = linhasDeOnibus;
-  }
-
-  String pegaCookie(Response response) {
-    String? rawCookie = response.headers['set-cookie'];
-    if (rawCookie != null) {
-      int index = rawCookie.indexOf(';');
-      return (index == -1) ? rawCookie : rawCookie.substring(0, index);
-    }
-    return '';
   }
 
   /// Retorna uma lista com os ônibus procurados pelo usuário.
