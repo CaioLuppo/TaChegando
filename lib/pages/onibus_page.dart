@@ -1,5 +1,6 @@
 import 'package:diacritic/diacritic.dart';
 import 'package:flutter/material.dart';
+import 'package:ta_chegando_fixed/components/loading.dart';
 import '../models/linha_de_onibus.dart';
 import '../styles/text.dart';
 import '../web/clients/onibus_client.dart';
@@ -84,19 +85,7 @@ class _OnibusPageState extends State<OnibusPage> {
             case ConnectionState.none:
               break;
             case ConnectionState.waiting:
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: const [
-                    CircularProgressIndicator(),
-                    Padding(
-                      padding: EdgeInsets.only(top: 8.0),
-                      child: Text("Carregando"),
-                    )
-                  ],
-                ),
-              );
+              return const Loading();
             case ConnectionState.active:
               break;
             case ConnectionState.done:
