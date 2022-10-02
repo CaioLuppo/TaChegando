@@ -1,6 +1,6 @@
 class Parada {
   String nome;
-  int codigo;
+  String codigo;
   double latidude;
   double longitude;
 

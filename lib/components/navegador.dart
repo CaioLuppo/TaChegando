@@ -23,7 +23,6 @@ class _NavegadorState extends State<Navegador> {
         children: const [
           OnibusPage(),
           Mapa(),
-          Text("Pontos")
         ],
       ),
       bottomNavigationBar: AnimatedBuilder(
@@ -44,10 +43,6 @@ class _NavegadorState extends State<Navegador> {
                 BottomNavigationBarItem(
                   icon: Icon(Icons.map),
                   label: "Mapa",
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.share_location_rounded),
-                  label: "Pontos",
                 ),
               ],
             );

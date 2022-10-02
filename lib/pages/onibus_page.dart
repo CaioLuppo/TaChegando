@@ -47,13 +47,19 @@ class _OnibusPageState extends State<OnibusPage> {
                 child: TextField(
                   cursorColor: Theme.of(context).backgroundColor,
                   cursorRadius: const Radius.circular(20),
-                  decoration: const InputDecoration(
-                    contentPadding: EdgeInsets.fromLTRB(16, 8, 8, 8),
+                  decoration: InputDecoration(
+                    contentPadding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
                     hintText: "Ex: Vila Mariana ou 917H",
-                    hintStyle: TextStyle(fontSize: 16),
+                    hintStyle: TextStyle(
+                      fontSize: 16,
+                      color: Theme.of(context)
+                          .colorScheme
+                          .inverseSurface
+                          .withAlpha(64),
+                    ),
                     filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(),
+                    fillColor: Theme.of(context).colorScheme.surface,
+                    border: const OutlineInputBorder(),
                   ),
                   onSubmitted: (texto) {
                     setState(() {
@@ -115,14 +121,14 @@ class _OnibusPageState extends State<OnibusPage> {
                                     borderRadius: BorderRadius.circular(10),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: Colors.grey.withOpacity(0.1),
+                                        color: Colors.black12.withAlpha(10),
                                         spreadRadius: 1,
                                         blurRadius: 3,
                                         offset: const Offset(0, 0),
                                       )
                                     ],
                                   ),
-                                  child: _CartaoOnibus(onibus),
+                                  child: _CartaoOnibus(onibus, context),
                                 ),
                               );
                             },
@@ -190,58 +196,60 @@ class _OnibusPageState extends State<OnibusPage> {
 
 class _CartaoOnibus extends Container {
   final LinhaOnibus onibus;
+  final BuildContext context;
 
-  _CartaoOnibus(this.onibus)
+  _CartaoOnibus(this.onibus, this.context)
       : super(
-            padding: const EdgeInsets.only(left: 10.0),
+          padding: const EdgeInsets.only(left: 10.0),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10.0),
+            color: Color(int.parse('0xFF${onibus.cor}')),
+          ),
+          height: 90,
+          child: Container(
+            padding: const EdgeInsets.all(4),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10.0),
-              color: Color(int.parse('0xFF${onibus.cor}')),
+              borderRadius: const BorderRadius.only(
+                  topRight: Radius.circular(10.0),
+                  bottomRight: Radius.circular(10.0)),
+              color: Theme.of(context).colorScheme.surface,
             ),
-            height: 90,
-            child: Container(
-              padding: const EdgeInsets.all(4),
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(10.0),
-                    bottomRight: Radius.circular(10.0)),
-                color: Colors.white,
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Row(
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.only(left: 4.0, right: 4.0),
-                        child: Icon(Icons.directions_bus),
-                      ),
-                      Text(
-                        "${onibus.letreiroEsquerda}/${onibus.letreiroDireita}",
-                        style: const TextStyle(
-                            fontWeight: FontWeight.w500, fontSize: 16),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.only(left: 4.0, right: 4.0),
-                        child: Icon(Icons.arrow_forward),
-                      ),
-                      Text(onibus.terminalPrimario)
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.only(left: 4.0, right: 4.0),
-                        child: Icon(Icons.arrow_back),
-                      ),
-                      Text(onibus.terminalSecundario)
-                    ],
-                  ),
-                ],
-              ),
-            ));
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Row(
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(left: 4.0, right: 4.0),
+                      child: Icon(Icons.directions_bus),
+                    ),
+                    Text(
+                      "${onibus.letreiroEsquerda}/${onibus.letreiroDireita}",
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w500, fontSize: 16),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(left: 4.0, right: 4.0),
+                      child: Icon(Icons.arrow_forward),
+                    ),
+                    Text(onibus.terminalPrimario)
+                  ],
+                ),
+                Row(
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(left: 4.0, right: 4.0),
+                      child: Icon(Icons.arrow_back),
+                    ),
+                    Text(onibus.terminalSecundario)
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
 }

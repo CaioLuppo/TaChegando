@@ -4,8 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
+
 import 'package:ta_chegando_fixed/components/marcadores.dart';
 import 'package:ta_chegando_fixed/web/clients/paradas_client.dart';
+import 'package:ta_chegando_fixed/credenciais.dart';
+
+Map<String, double> localizacaoAtual = {
+  "lat": -23.5489,
+  "lng": -46.6388,
+};
 
 class Mapa extends StatefulWidget {
   const Mapa({super.key});
@@ -17,10 +24,6 @@ class Mapa extends StatefulWidget {
 class _MapaState extends State<Mapa> {
   bool statusLocalizacao = false;
   final ParadasWebClient _web = ParadasWebClient();
-  Map<String, double> localizacaoAtual = {
-    "lat": -23.5489,
-    "lng": -46.6388,
-  };
 
   @override
   void initState() {
@@ -83,14 +86,10 @@ class _MapaState extends State<Mapa> {
                             localizacaoAtual['lat']!,
                             localizacaoAtual['lng']!,
                           ),
-                          16,
+                          17,
                         ),
                       );
                     },
-                    interactiveFlags: InteractiveFlag.doubleTapZoom |
-                        InteractiveFlag.pinchZoom |
-                        InteractiveFlag.pinchMove |
-                        InteractiveFlag.drag,
                     maxZoom: 18.0,
                     minZoom: 16.0,
                     center: LatLng(
@@ -105,24 +104,23 @@ class _MapaState extends State<Mapa> {
                     urlTemplate: tema == Brightness.light
                         ? "https://api.mapbox.com/styles/v1/caioluppo/cl8ercndg000f15s32aorx8v3/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiY2Fpb2x1cHBvIiwiYSI6ImNsOGRmeG55bjA0OXgzdXA0dTlvcWhqb2kifQ.C5M2i9ZwuzD-qZzPfVDAlA"
                         : "https://api.mapbox.com/styles/v1/caioluppo/cl8er7xxd002514mxxfvnsa7u/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiY2Fpb2x1cHBvIiwiYSI6ImNsOGRmeG55bjA0OXgzdXA0dTlvcWhqb2kifQ.C5M2i9ZwuzD-qZzPfVDAlA",
-                    additionalOptions: const {
-                      'accessToken':
-                          'pk.eyJ1IjoiY2Fpb2x1cHBvIiwiYSI6ImNsOGRmeG55bjA0OXgzdXA0dTlvcWhqb2kifQ.C5M2i9ZwuzD-qZzPfVDAlA',
+                    additionalOptions: {
+                      'accessToken': Credenciais.tokenMapa,
                       'id': 'mapbox.mapbox-streets-v8'
                     },
                   ),
+                  CircleLayer(
+                    circles: [
+                      Marcadores.posicaoAtual(
+                        localizacaoAtual['lat']!,
+                        localizacaoAtual['lng']!,
+                      )
+                    ],
+                  ),
                   MarkerLayer(
+                    rotate: true,
                     markers: ParadasWebClient.paradasMapa,
                   ),
-                  if (statusLocalizacao)
-                    CircleLayer(
-                      circles: [
-                        Marcadores.posicaoAtual(
-                          localizacaoAtual['lat']!,
-                          localizacaoAtual['lng']!,
-                        )
-                      ],
-                    )
                 ],
               ),
             )
