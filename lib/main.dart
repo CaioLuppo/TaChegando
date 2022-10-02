@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:ta_chegando_fixed/web/clients/paradas_client.dart';
 
 import 'components/navegador.dart';
 

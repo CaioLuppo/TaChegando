@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ta_chegando_fixed/components/loading.dart';
+// ignore: depend_on_referenced_packages
 import 'package:intl/intl.dart';
 import 'package:ta_chegando_fixed/styles/text.dart';
 import 'package:ta_chegando_fixed/web/clients/paradas_client.dart';
